@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinners';
 import { personaService } from '@/services/persona.service';
+import { toast } from 'sonner';
 import { getSignupSchema, SignupSchemaType } from '../forms/signup-shema';
 
 // Campos de texto simples. Las contrasenas van aparte por el boton de ver
@@ -66,12 +67,12 @@ export function SignUpPage() {
       // Y nunca se manda "rol": el backend pone CLIENTE por defecto
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmar, ...datos } = values;
-      console.log('>>> registrando usuario:', datos.usuario);
 
       const respuesta = await personaService.registrar(datos);
-      console.log('>>> respuesta del registro:', respuesta);
 
-      alert(`Cuenta creada para ${respuesta.data.nombres}. Ya puedes ingresar.`);
+      toast.success(
+        `Cuenta creada para ${respuesta.data.nombres}. Ya puedes ingresar.`,
+      );
       navigate('/auth/signin');
     } catch (err) {
       setError(

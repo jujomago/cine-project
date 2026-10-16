@@ -81,7 +81,12 @@ export function PeliculasDellatePage() {
                                 {pelicula.titulo}
                             </h1>
                             <p className="mt-1 text-sm text-muted-foreground">
-                                fecha holasas
+                                {pelicula.duracionMinutos} min · Estreno{' '}
+                                {new Date(pelicula.fechaEstreno).toLocaleDateString('es-BO', {
+                                    day: 'numeric',
+                                    month: 'long',
+                                    year: 'numeric',
+                                })}
                             </p>
                         </div>
                         <p className="text-sm leading-relaxed text-secondary-foreground">

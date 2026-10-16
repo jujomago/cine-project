@@ -5,14 +5,8 @@ import { CrearReserva, ReservaCreada } from "@/types/reserva";
 export const reservaService = {
 
     async crear(reserva: CrearReserva) : Promise<ReservaCreada> {
-        console.log('Enviendo reserva:', reserva);
-
         const {data} = await http.post<ReservaCreada>('/reservas', reserva);
-
-        console.log('reserva creada', data);
-        
         return data;
-
     },
 
     generarCodigo(idFuncion: number): string {

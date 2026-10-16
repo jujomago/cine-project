@@ -27,8 +27,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       usuario: payload.usuario,
       roles: payload.roles,
     }
-    console.log('sesion iniciada:', sesion);
-    
+
     setUser(sesion);
   }, []);
 
@@ -56,7 +55,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
         usuario: payload.usuario,
         roles: payload.roles,
       });
-      console.log('>>> sesion restaurada tras F5:', payload.usuario);
     } else if (token) {
       // Token roto o vencido: ya no sirve, mejor no dejarlo guardado
       authService.borrarToken();

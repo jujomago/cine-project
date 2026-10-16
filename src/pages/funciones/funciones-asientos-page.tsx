@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Container } from "@/components/common/container";
 import { Button } from "@/components/ui/button";
 import { Asiento, Funcion } from "@/types/cartelera";
-import { Link, useParams, useNavigate } from "react-router";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { carteleraService } from "@/services/cartelera.service";
 import { useAuth } from "@/auth/context/auth-context";
 import { reservaService } from "@/services/reserva.service";
+import { toast } from "sonner";
 
 
 export function FuncionAsientosPage() {
@@ -97,7 +98,6 @@ export function FuncionAsientosPage() {
         if (!funcion) return;
         try {
             setReservado(true);
-            setError(null);
 
             const respuesta = await reservaService.crear({
                 idCliente: user.id,
@@ -112,10 +112,11 @@ export function FuncionAsientosPage() {
                 })),
             });
 
-            alert(`Reserva creada: ${respuesta.data.reserva.codigo}`);
+            toast.success(`Reserva creada: ${respuesta.data.reserva.codigo}`);
             navigate('/peliculas')
         } catch (e) {
-            setError((e as Error).message);
+            // con toast y no setError: un fallo no debe borrar el mapa de asientos
+            toast.error((e as Error).message || 'No se pudo crear la reserva');
         } finally {
             setReservado(false);
         }

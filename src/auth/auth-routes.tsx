@@ -5,8 +5,8 @@ import { SignUpPage } from './pages/signup-page';
 /**
  * Rutas publicas de acceso, montadas en /auth/*.
  *
- * Por ahora solo esta el formulario de entrada. Registro y recuperacion de
- * contrasena se agregan aqui cuando toque armarlos.
+ * Inicio de sesion y registro de cuenta. Recuperacion de contrasena todavia
+ * no existe.
  */
 export const authRoutes: RouteObject[] = [
   {

@@ -53,8 +53,7 @@ export const MENU_SIDEBAR: MenuConfig = [
   {
     title: 'Personas',
     icon: Users,
-    path: '/personas',
-    disabled: true,
+    path: '/panel/personas',
   },
   {
     title: 'Roles',

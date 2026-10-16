@@ -15,7 +15,7 @@ export const carteleraService = {
 
     //  trae las salas del cine
     async listarSalas(): Promise<Sala[]> {
-        const {data} = await http.get<Sala[]>('/cartelera/saltas');
+        const {data} = await http.get<Sala[]>('/cartelera/salas');
         return data;
     },
 

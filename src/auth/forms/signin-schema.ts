@@ -7,7 +7,6 @@ export const getSigninSchema = () =>
   z.object({
     usuario: z.string().min(1, { message: 'Ingresa tu usuario' }),
     contrasena: z.string().min(1, { message: 'Ingresa tu contraseña' }),
-    recordarme: z.boolean().optional(),
   });
 
 export type SigninSchemaType = z.infer<ReturnType<typeof getSigninSchema>>;

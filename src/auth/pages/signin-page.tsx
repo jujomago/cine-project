@@ -3,7 +3,7 @@ import { useAuth } from '@/auth/context/auth-context';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Alert, AlertIcon, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,12 +29,9 @@ export function SignInPage() {
 
   const form = useForm<SigninSchemaType>({
     resolver: zodResolver(getSigninSchema()),
-    // Credenciales por defecto de la plantilla. Estan a la vista a proposito:
-    // todavia no hay backend, se valida contra el proveedor local.
     defaultValues: {
       usuario: '',
       contrasena: '',
-      recordarme: true,
     },
   });
 
@@ -141,6 +138,13 @@ export function SignInPage() {
           </Button>
         </form>
       </Form>
+
+      <p className="text-center text-sm text-muted-foreground">
+        ¿No tienes cuenta?{' '}
+        <Link to="/auth/signup" className="font-medium text-primary hover:underline">
+          Crear cuenta
+        </Link>
+      </p>
     </div>
   );
 }
