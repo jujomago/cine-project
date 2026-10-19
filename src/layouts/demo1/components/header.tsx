@@ -18,6 +18,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Container } from '@/components/common/container';
+import { useAuth } from '@/auth/context/auth-context';
 import { MegaMenu } from './mega-menu';
 import { MegaMenuMobile } from './mega-menu-mobile';
 import { SidebarMenu } from './sidebar-menu';
@@ -25,6 +26,7 @@ import { SidebarMenu } from './sidebar-menu';
 export function Header() {
   const [isSidebarSheetOpen, setIsSidebarSheetOpen] = useState(false);
   const [isMegaMenuSheetOpen, setIsMegaMenuSheetOpen] = useState(false);
+  const { user } = useAuth();
 
   const { pathname } = useLocation();
   const mobileMode = useIsMobile();
@@ -110,11 +112,20 @@ export function Header() {
         <div className="flex items-center gap-3">
           <UserDropdownMenu
             trigger={
-              <img
-                className="size-9 rounded-full border-2 border-success shrink-0 cursor-pointer"
-                src={toAbsoluteUrl('/media/avatars/300-2.png')}
-                alt="User Avatar"
-              />
+              <span className="flex cursor-pointer items-center gap-2">
+                <img
+                  className="size-9 rounded-full border-2 border-success shrink-0"
+                  src={toAbsoluteUrl('/media/avatars/300-2.png')}
+                  alt="Avatar de usuario"
+                />
+                {/* nombre y rol junto al avatar */}
+                <span className="hidden flex-col leading-tight lg:flex">
+                  <span className="text-sm font-medium text-mono">{user?.usuario}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {(user?.roles ?? []).join(' · ')}
+                  </span>
+                </span>
+              </span>
             }
           />
         </div>

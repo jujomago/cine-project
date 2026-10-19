@@ -68,7 +68,7 @@ export function PeliculasPage() {
                 {/* el encabezado queda siempre a la vista: si no, al filtrar
                     a una lista vacia se pierden los botones de filtro */}
                 <div className='flex flex-wrap items-center justify-between gap-3'>
-                    <h1>Pelicula</h1>
+                    <h1 className='text-2xl font-semibold tracking-tight'>Película</h1>
 
                     {/* filtro activas/inactivas: solo cambia lo que se pinta */}
                     <div className='flex gap-2'>

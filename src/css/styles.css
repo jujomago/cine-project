@@ -24,3 +24,34 @@
 /** Dark/Light Theme Variant **/
 @custom-variant dark (&:is(.dark *));
 @custom-variant light (&:not(.dark *));
+
+/** Fuente display del cine (Anton, cargada en index.html) **/
+@theme {
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+}
+
+/** Franja tipo pelicula (perforaciones) para separar secciones **/
+.film-strip {
+  background-color: var(--mono);
+  background-image: radial-gradient(circle, var(--background) 42%, transparent 44%);
+  background-size: 28px 28px;
+  background-position: center;
+  background-repeat: repeat-x;
+  height: 14px;
+}
+
+/* Entrada suave con retardo variable (se usa con style={{ animationDelay }}) */
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animar-subir {
+  animation: subir 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
