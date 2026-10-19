@@ -57,7 +57,7 @@ export function Demo1Layout() {
   return (
     <>
       <Helmet>
-        <title>{item?.title}</title>
+        <title>{item?.title ? `Cine – ${item.title}` : 'Cine'}</title>
       </Helmet>
 
       {!isMobile && <Sidebar />}

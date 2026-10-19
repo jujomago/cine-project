@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Container } from '@/components/common/container';
+import { CargandoCentrado, ErrorCarga } from '@/components/common/estados-carga';
+import { formatearDuracion } from '@/lib/utils';
 import { peliculaService } from '@/services/pelicula.service';
 import { Pelicula } from '@/types/pelicula';
-
-function formatearDuracion(minutos: number): string {
-    const horas = Math.floor(minutos / 60);
-    const resto = minutos % 60;
-    return horas > 0 ? `${horas}h ${resto}m` : `${resto}m`
-}
 
 /**
  * Home publico del cine.
@@ -23,7 +19,11 @@ export function CineHomePage() {
 
     useEffect(() => {
         peliculaService.listarPeliculas()
-            .then((respuesta) => setPeliculas(respuesta.data))
+            .then((respuesta) => {
+                // solo las peliculas activas forman parte del home
+                const activas = respuesta.data.filter((pelicula) => pelicula.activo);
+                setPeliculas(activas);
+            })
             .catch((e: Error) => setError(e.message))
             .finally(() => setCargando(false));
     }, [])
@@ -46,9 +46,9 @@ export function CineHomePage() {
             <Container>
                 <div className="space-y-6 py-8">
 
-                    {cargando && <p>Cargando pelicula....</p>}
+                    {cargando && <CargandoCentrado />}
 
-                    {error && <p>{error}</p>}
+                    {error && <ErrorCarga mensaje={error} />}
 
                     {!cargando && !error && peliculas.length === 0 && (
                         <p>No hay peliculas en la cartelera</p>

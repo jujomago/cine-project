@@ -22,6 +22,26 @@ export interface Sala {
     activa: boolean;
 }
  
+// POST /cartelera/funciones (ADMIN o GERENTE)
+export interface CrearFuncion {
+    idPelicula: number;
+    idSala: number;
+    /** YYYY-MM-DD */
+    fecha: string;
+    /** HH:mm:ss */
+    horaInicio: string;
+    /** HH:mm:ss */
+    horaFin: string;
+    precio: number;
+}
+
+// la respuesta trae lo mismo que se envio, mas el idFuncion y el estado
+export interface FuncionCreada {
+    status: string;
+    message?: string;
+    data: CrearFuncion & { idFuncion: number; estado: string };
+}
+
 //  Asiento
 
 export interface Asiento {

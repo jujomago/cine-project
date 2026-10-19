@@ -4,6 +4,7 @@ import { JSX, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MENU_SIDEBAR } from '@/config/menu.config';
 import { MenuConfig, MenuItem } from '@/config/types';
+import { useAuth } from '@/auth/context/auth-context';
 import { cn } from '@/lib/utils';
 import {
   AccordionMenu,
@@ -19,11 +20,47 @@ import { Badge } from '@/components/ui/badge';
 
 export function SidebarMenu() {
   const { pathname } = useLocation();
-  // Memoize matchPath to prevent unnecessary re-renders
+  const { tieneRol } = useAuth();
+
+  const puedeVer = (item: MenuItem): boolean =>
+    !item.roles || item.roles.length === 0 || tieneRol(...item.roles);
+
+  // Quita las entradas que el rol actual no puede ver y tambien los
+  // headings que quedaron sin ninguna entrada debajo (p. ej. un CLIENTE
+  // no debe ver "Administracion")
+  const menuFiltrado = ((): MenuConfig => {
+    const resultado: MenuConfig = [];
+    for (const item of MENU_SIDEBAR) {
+      if (item.heading) {
+        const anterior = resultado[resultado.length - 1];
+        if (anterior?.heading) resultado.pop();
+        resultado.push(item);
+      } else if (puedeVer(item)) {
+        resultado.push(item);
+      }
+    }
+    const ultimo = resultado[resultado.length - 1];
+    if (ultimo?.heading) resultado.pop();
+    return resultado;
+  })();
+
+  // Memoize matchPath to prevent unnecessary re-renders.
+  // Si la ruta actual es una entrada exacta del menú (p. ej.
+  // /panel/funciones/nueva) solo se marca esa entrada; si es una subruta
+  // sin entrada propia (p. ej. /peliculas/5) se marca el padre más cercano.
   const matchPath = useCallback(
-    (path: string): boolean =>
-      path === pathname || (path.length > 1 && pathname.startsWith(path)),
-    [pathname],
+    (path: string): boolean => {
+      const rutasExactas = new Set(
+        menuFiltrado
+          .filter((item) => item.path)
+          .map((item) => item.path as string),
+      );
+      if (rutasExactas.has(pathname)) {
+        return path === pathname;
+      }
+      return path === pathname || (path.length > 1 && pathname.startsWith(path));
+    },
+    [pathname, menuFiltrado],
   );
 
   // Global classNames for consistent styling
@@ -217,7 +254,7 @@ export function SidebarMenu() {
         collapsible
         classNames={classNames}
       >
-        {buildMenu(MENU_SIDEBAR)}
+        {buildMenu(menuFiltrado)}
       </AccordionMenu>
     </div>
   );

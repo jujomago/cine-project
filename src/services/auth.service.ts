@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { RespuestaLogin, Credenciales } from "@/types/auth"
+import { RespuestaLogin, Credenciales, Rol, RolAsignado } from "@/types/auth"
 
 
 const CLAVE_TOKEN = 'cine_token';
@@ -32,10 +32,24 @@ export const authService = {
     },
     borrarToken() {
         try {
-            localStorage.removeItem(CLAVE_TOKEN);
+            localStorage.removeItem(CLAVE_TOKEN)
         } catch  {
             // /no se hace nada/
             //   console.log('No se pudo borrar el token');
         }
-    }
+    },
+
+    // lista de roles (protegido: ADMIN o GERENTE). El backend lo envuelve
+    // como { status, message, data: Rol[] }
+    async listarRoles(): Promise<Rol[]> {
+        const {data} = await http.get<{ data: Rol[] }>('/auth/roles');
+        return data.data;
+    },
+
+    // asigna un rol a la persona (solo ADMIN). La persona debe volver a
+    // iniciar sesion para recibir un token con el rol nuevo
+    async asignarRol(idPersona: number, idRol: number): Promise<RolAsignado> {
+        const {data} = await http.post<RolAsignado>('/auth/rol-usuario', {idPersona, idRol});
+        return data;
+    },
 }

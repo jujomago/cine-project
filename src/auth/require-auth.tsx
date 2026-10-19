@@ -7,9 +7,12 @@ import { useAuth } from './context/auth-context';
  *
  * Si no hay sesion, manda al formulario guardando en `next` a donde se
  * queria entrar, para volver ahi despues de iniciar sesion.
+ *
+ * Si se pasa `roles`, ademas exige al menos uno de ellos: sin el rol se
+ * muestra la pantalla 403 (no al login, porque la sesion si existe).
  */
-export const RequireAuth = () => {
-  const { isAuthenticated, loading } = useAuth();
+export const RequireAuth = ({ roles }: { roles?: string[] }) => {
+  const { isAuthenticated, loading, tieneRol } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -23,6 +26,10 @@ export const RequireAuth = () => {
         replace
       />
     );
+  }
+
+  if (roles && roles.length > 0 && !tieneRol(...roles)) {
+    return <Navigate to="/error/403" replace />;
   }
 
   return <Outlet />;

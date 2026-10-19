@@ -1,4 +1,3 @@
-
 // get
 // catalogo de pelicula
 export interface Pelicula {
@@ -11,6 +10,21 @@ export interface Pelicula {
   // Solo los nombres del archivo, no las imagenes
   // URL se armando con {apiUrl}/files/pelicula/{nombre}
   imagenes: string[];
+}
+
+export interface CrearPelicula {
+  titulo: string;
+  sinopsis: string;
+  duracionMinutos: number;
+  /** Formato YYYY-MM-DD */
+  fechaEstreno: string;
+  activo: boolean;
+}
+
+export interface PeliculaCreada {
+  status: string;
+  message?: string;
+  data: Partial<Pelicula>;
 }
 
 // Es generico es un hueco que rrelena al usarlo

@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { CrearReserva, ReservaCreada } from "@/types/reserva";
+import { CrearReserva, MisReserva, ReservaCreada } from "@/types/reserva";
 
 
 export const reservaService = {
@@ -7,6 +7,14 @@ export const reservaService = {
     async crear(reserva: CrearReserva) : Promise<ReservaCreada> {
         const {data} = await http.post<ReservaCreada>('/reservas', reserva);
         return data;
+    },
+
+    // reservas del usuario autenticado (requiere token de CLIENTE).
+    // el backend lo envuelve como { status, message, data: MisReserva[] }.
+    // total llega como string ("30.00") porque es numeric de Postgres
+    async obtenerMisReservas(): Promise<MisReserva[]> {
+        const {data} = await http.get<{ data: MisReserva[] }>('/reservas/mis-reservas');
+        return data.data.map((reserva) => ({ ...reserva, total: Number(reserva.total) }));
     },
 
     generarCodigo(idFuncion: number): string {

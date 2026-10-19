@@ -7,7 +7,8 @@ import { authService } from '@/services/auth.service';
 export const http = axios.create({
     // axios va http://localhost:3000/api/v1/peliculas
     baseURL: env.apiUrl,
-    timeout:  10000, // 10 seg
+    // 30s: las subidas de imagenes (5 archivos) pueden tardar mas de 10s
+    timeout: 30000,
 });
 
 
@@ -50,20 +51,29 @@ http.interceptors.response.use(
         const status = error.response?.status as number | undefined;
         const url: string = error.config?.url ?? '';
 
-        // 401 = token ausente o vencido: se cierra la sesion y se manda al login.
+        // 401 = token ausente o vencido: se cierra la sesion y se manda al
+        // login conservando en `next` la ruta actual (query incluida) para
+        // volver ahi tras iniciar sesion.
         // Excepcion: el login mismo devuelve 401 con credenciales mal,
         // y ahi hay que mostrar el error en el formulario, no recargar la pagina.
         if (status === 401 && !url.includes('/auth/login')) {
             authService.borrarToken();
-            if (!window.location.pathname.endsWith('/auth/signin')) {
-                window.location.assign('/auth/signin');
+            const enLogin = window.location.pathname.endsWith('/auth/signin');
+            if (!enLogin) {
+                const destino = encodeURIComponent(
+                    window.location.pathname + window.location.search,
+                );
+                window.location.assign(`/auth/signin?next=${destino}`);
             }
         }
 
-        const mensaje = mensajeDeError(
-            error.response?.data,
-            'No se puede conectar con el servidor',
-        );
+        // 403 = sesion valida pero el rol no alcanza: usar el mensaje del
+        // backend si viene, si no un texto claro en español.
+        const fallback =
+            status === 403
+                ? 'No tienes permiso para esta acción'
+                : 'No se puede conectar con el servidor';
+        const mensaje = mensajeDeError(error.response?.data, fallback);
         return Promise.reject(new Error(mensaje));
     },
 )

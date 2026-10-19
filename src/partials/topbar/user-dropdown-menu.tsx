@@ -1,21 +1,13 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/auth/context/auth-context';
-import { I18N_LANGUAGES } from '@/i18n/config';
-import { Language } from '@/i18n/types';
-import { Globe, Moon } from 'lucide-react';
+import { Moon } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useLanguage } from '@/providers/i18n-provider';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
@@ -25,11 +17,10 @@ import { Switch } from '@/components/ui/switch';
  *
  * Se quitaron los enlaces de la plantilla (perfil, facturación, equipos…)
  * porque apuntaban a páginas demo que ya no existen. Quedan las opciones que
- * sí funcionan: idioma, tema oscuro y cerrar sesión.
+ * sí funcionan: tema oscuro y cerrar sesión.
  */
 export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
   const { logout, user } = useAuth();
-  const { currenLanguage, changeLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
 
   const nombre = user?.usuario ?? 'Usuario';
@@ -47,30 +38,6 @@ export function UserDropdownMenu({ trigger }: { trigger: ReactNode }) {
         </div>
 
         <DropdownMenuSeparator />
-
-        {/* Idioma */}
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <Globe className="size-4 me-2" />
-            <span>Idioma</span>
-            <span className="ms-auto text-xs text-muted-foreground uppercase">
-              {currenLanguage.code}
-            </span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={currenLanguage.code}>
-              {I18N_LANGUAGES.map((idioma: Language) => (
-                <DropdownMenuRadioItem
-                  key={idioma.code}
-                  value={idioma.code}
-                  onClick={() => changeLanguage(idioma)}
-                >
-                  {idioma.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
 
         {/* Tema oscuro */}
         <DropdownMenuItem

@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { peliculaService } from '@/services/pelicula.service';
 import { Pelicula } from '@/types/pelicula';
 import { Container } from '@/components/common/container';
+import { CargandoCentrado, ErrorCarga } from '@/components/common/estados-carga';
+import { formatearFechaLarga, formatearHora, formatearPrecio } from '@/lib/utils';
 import { Link, useParams } from 'react-router-dom';
 import { Funcion } from '@/types/cartelera';
 import { carteleraService } from '@/services/cartelera.service';
@@ -35,7 +38,7 @@ export function PeliculasDellatePage() {
     if (cargando) {
         return (
             <Container>
-                <p>Cargando pelicula....</p>
+                <CargandoCentrado />
             </Container>
         )
     }
@@ -43,7 +46,7 @@ export function PeliculasDellatePage() {
     if (error) {
         return (
             <Container>
-                <p>{error}</p>
+                <ErrorCarga mensaje={error} />
             </Container>
         )
     }
@@ -60,8 +63,15 @@ export function PeliculasDellatePage() {
 
 
     const poster = pelicula.imagenes[0];
+    // una funcion cancelada ya no se puede reservar: no se lista como enlace
+    const funcionesVisibles = funciones.filter(
+        (funcion) => funcion.estado.toUpperCase() !== 'CANCELADA',
+    );
     return (
         <Container>
+            <Helmet>
+                <title>Cine – {pelicula.titulo}</title>
+            </Helmet>
             <div className="py-8">
                 <div className="mt-6 grid gap-8 md:grid-cols-[280px_1fr]">
                     <div className="overflow-hidden rounded-lg bg-muted aspect-[2/3]">
@@ -82,11 +92,7 @@ export function PeliculasDellatePage() {
                             </h1>
                             <p className="mt-1 text-sm text-muted-foreground">
                                 {pelicula.duracionMinutos} min · Estreno{' '}
-                                {new Date(pelicula.fechaEstreno).toLocaleDateString('es-BO', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric',
-                                })}
+                                {formatearFechaLarga(pelicula.fechaEstreno)}
                             </p>
                         </div>
                         <p className="text-sm leading-relaxed text-secondary-foreground">
@@ -97,12 +103,12 @@ export function PeliculasDellatePage() {
                                 Horarios
                             </h2>
 
-                            {funciones.length === 0 ? (
+                            {funcionesVisibles.length === 0 ? (
                                 <p>No hay funciones programadas</p>
                             ) : (
                                 <div className="mt-3 flex flex-wrap gap-3">
                                     {/* CREACION DE FUNCION COMPLETA */}
-                                    {funciones.map((funcion) => (
+                                    {funcionesVisibles.map((funcion) => (
                                         // Link y no div: toda la tarjeta lleva al mapa de butacas de esa funcion
                                         <Link
                                             key={funcion.idFuncion}
@@ -110,15 +116,13 @@ export function PeliculasDellatePage() {
                                             className='rounded-lg border border-border px-4 py-3 transition-colors hover:border-primary'
                                         >
                                             <p className="text-base font-medium text-mono">
-                                               Hora Inicio {funcion.horaInicio.slice(0, 5)}
+                                               Hora Inicio {formatearHora(funcion.horaInicio)}
                                             </p>
                                             <p className="mt-1 text-xs text-muted-foreground">
-                                               Precio {funcion.precio}
+                                                Precio {formatearPrecio(funcion.precio)}
                                             </p>
                                             <p className="mt-1 text-xs text-muted-foreground">
                                               Salas  {funcion.sala} - {funcion.tipoSala}
-                                            </p>
-                                            <p className="mt-2 text-sm font-semibold text-mono">
                                             </p>
                                         </Link>
 

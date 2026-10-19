@@ -54,3 +54,23 @@ export interface ReservaCreada{
         detalles: DetalleRespuesta[];
     };
 }
+
+// GET /reservas/mis-reservas (token de CLIENTE): una fila por reserva,
+// con pelicula, sala, funcion y asientos ya resueltos
+export interface AsientoReservaItem {
+    filaAsiento: string;
+    numeroAsiento: number;
+}
+
+export interface MisReserva {
+    id: number;
+    codigoReserva: string;
+    fechaReserva: string;
+    estado: EstadoReserva;
+    total: number;
+    pelicula: string;
+    sala: string;
+    fechaFuncion: string; // YYYY-MM-DD
+    horaInicio: string;   // HH:mm:ss
+    asientos: AsientoReservaItem[];
+}

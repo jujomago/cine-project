@@ -3,6 +3,8 @@ import { RespuestaPaginada } from './pelicula';
 // Una fila del listado administrativo (GET /persona y GET /persona/buscar).
 // documento y telefono llegan como texto aunque parezcan numeros;
 // fechaNacimiento es una fecha ISO completa, no "1995-05-20".
+// roles y tieneUsuario solo vienen en esos dos listados: si no hay usuario
+// no se le puede asignar rol (el backend responde 404).
 export interface Persona {
   id: number;
   nombres: string;
@@ -11,6 +13,8 @@ export interface Persona {
   telefono: string;
   email: string;
   fechaNacimiento: string;
+  roles: string[];
+  tieneUsuario: boolean;
 }
 
 // El sobre paginado es el mismo de peliculas: data, total, pagina, totalPaginas

@@ -1,5 +1,5 @@
 import { http } from "@/lib/http";
-import { Funcion, Sala, Asiento } from "@/types/cartelera";
+import { Funcion, FuncionCreada, Sala, Asiento, CrearFuncion } from "@/types/cartelera";
 
 
 // llamada a la api de cartelera
@@ -16,6 +16,13 @@ export const carteleraService = {
     //  trae las salas del cine
     async listarSalas(): Promise<Sala[]> {
         const {data} = await http.get<Sala[]>('/cartelera/salas');
+        return data;
+    },
+
+    // registro de funcion (protegido: ADMIN o GERENTE).
+    // si la sala esta ocupada en ese horario el backend responde 409
+    async crear(funcion: CrearFuncion): Promise<FuncionCreada> {
+        const {data} = await http.post<FuncionCreada>('/cartelera/funciones', funcion);
         return data;
     },
 

@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { Container } from "@/components/common/container";
+import { CargandoCentrado, ErrorCarga } from "@/components/common/estados-carga";
 import { Button } from "@/components/ui/button";
 import { Asiento, Funcion } from "@/types/cartelera";
 import { Link, useParams, useNavigate } from "react-router-dom";
@@ -7,6 +9,8 @@ import { carteleraService } from "@/services/cartelera.service";
 import { useAuth } from "@/auth/context/auth-context";
 import { reservaService } from "@/services/reserva.service";
 import { toast } from "sonner";
+import { CircleCheckBig } from "lucide-react";
+import { formatearPrecio } from "@/lib/utils";
 
 
 export function FuncionAsientosPage() {
@@ -23,6 +27,9 @@ export function FuncionAsientosPage() {
     const navigate = useNavigate();
     const { isAuthenticated, user } = useAuth();
     const [reservado, setReservado] = useState(false);
+
+    // se llena al confirmar la reserva y cambia la pantalla a la confirmacion
+    const [confirmada, setConfirmada] = useState<{ codigo: string; butacas: string; total: number } | null>(null);
 
 
     useEffect(() => {
@@ -77,7 +84,7 @@ export function FuncionAsientosPage() {
     if (cargando) {
         return (
             <Container>
-                <p>Cargando pelicula....</p>
+                <CargandoCentrado />
             </Container>
         )
     }
@@ -85,7 +92,41 @@ export function FuncionAsientosPage() {
     if (error) {
         return (
             <Container>
-                <p>{error}</p>
+                <ErrorCarga mensaje={error} />
+            </Container>
+        )
+    }
+
+    // tras reservar se muestra el codigo en vez del mapa de butacas
+    if (confirmada) {
+        return (
+            <Container>
+                <div className="flex flex-col items-center gap-4 py-16 text-center">
+                    <CircleCheckBig className="size-12 text-primary" />
+                    <h1 className="text-2xl font-semibold tracking-tight text-mono">
+                        Reserva confirmada
+                    </h1>
+                    <p className="text-sm text-muted-foreground">
+                        Tu código de reserva es
+                    </p>
+                    <p className="rounded-lg border border-border bg-muted/60 px-4 py-2 text-lg font-semibold text-mono">
+                        {confirmada.codigo}
+                    </p>
+                    <p className="text-sm">
+                        {funcion?.pelicula} · {confirmada.butacas}
+                    </p>
+                    <p className="text-xl font-semibold text-mono">
+                        {formatearPrecio(confirmada.total)}
+                    </p>
+                    <div className="mt-4 flex gap-3">
+                        <Button asChild>
+                            <Link to="/cartelera">Ver cartelera</Link>
+                        </Button>
+                        <Button variant="outline" asChild>
+                            <Link to="/peliculas">Otras películas</Link>
+                        </Button>
+                    </div>
+                </div>
             </Container>
         )
     }
@@ -95,7 +136,11 @@ export function FuncionAsientosPage() {
             navigate(`/auth/signin?next=/funciones/${idFuncion}`);
             return;
         }
-        if (!funcion) return;
+        if (!funcion) {
+            // la funcion no existe o no esta en el listado: avisar y no fallar en silencio
+            toast.error('No se pudo cargar la función. Vuelve a la cartelera.');
+            return;
+        }
         try {
             setReservado(true);
 
@@ -113,7 +158,12 @@ export function FuncionAsientosPage() {
             });
 
             toast.success(`Reserva creada: ${respuesta.data.reserva.codigo}`);
-            navigate('/peliculas')
+            // la pantalla cambia a la confirmacion con el codigo
+            setConfirmada({
+                codigo: respuesta.data.reserva.codigo,
+                butacas: nombresElegidos,
+                total,
+            });
         } catch (e) {
             // con toast y no setError: un fallo no debe borrar el mapa de asientos
             toast.error((e as Error).message || 'No se pudo crear la reserva');
@@ -128,6 +178,9 @@ export function FuncionAsientosPage() {
 
     return (
         <Container>
+            <Helmet>
+                <title>{funcion ? `Cine – Reserva: ${funcion.pelicula}` : 'Cine – Reserva'}</title>
+            </Helmet>
             <div className="py-8">
                 {
                     funcion && (
@@ -210,7 +263,7 @@ export function FuncionAsientosPage() {
 
                             }
                         </p>
-                        <p className="mt-1 text-xl font-semibold text-mono">Bs {total}</p>
+                        <p className="mt-1 text-xl font-semibold text-mono">{formatearPrecio(total)}</p>
                     </div>
                     <Button onClick={reservar} disabled={elegidos.length === 0 || reservado}>
                         {reservado ? 'Reservando…' : 'Reservar'}
