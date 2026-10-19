@@ -4,6 +4,9 @@
 /* ReUI Configs */
 @import './config.reui.css';
 
+/* Temas de la zona publica (colores hexadecimales documentados ahi) */
+@import './temas-publico.css';
+
 /** Global Styles **/
 @layer base {
   * {

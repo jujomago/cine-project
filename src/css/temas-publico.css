@@ -1,0 +1,259 @@
+/* ============================================================================
+   TEMAS DEL FRONTEND PUBLICO (home, peliculas, cartelera y demas rutas publicas)
+
+   AQUI VIVEN TODOS LOS COLOS Y FUENTES de titulares. Para cambiar un color
+   basta con editar el valor hexadecimal (#RRGGBB) del bloque del tema; para
+   cambiar la fuente de titulares, editar --font-display (el nombre de la
+   familia, tal como se carga en index.html). No hay que tocar TypeScript
+   ni conocer Tailwind.
+
+   Temas disponibles:  oscuro  |  papel  |  neon  |  retro
+     - oscuro : sala oscura con acento ambar (el original, por defecto)
+     - papel  : claro, fondo crema, acento rojo cortina, titulares serif
+     - neon   : oscuro azulado con cian y magenta, titulares grotescos
+     - retro  : claro vintage crema + verde + mostaza, titulares slab 70s
+
+   COMO CAMBIAR EL TEMA ACTIVO
+     1. Abrir src/lib/temas-publico.ts
+     2. Cambiar la constante TEMA_POR_DEFECTO por: 'oscuro' | 'papel' | 'neon' | 'retro'
+
+   COMO PREVISUALIZAR UN TEMA SIN CAMBIAR CODIGO
+     Agregar ?tema=papel (o neon/retro/oscuro) a la URL, ejemplo:
+     http://localhost:5173/cartelera?tema=retro
+
+   COMO AGREGAR UN TEMA NUEVO
+     1. Copiar cualquiera de los bloques .zona-publica[data-tema='...'] de abajo
+     2. Ponerle otro nombre entre comillas simples y elegir sus hex y su fuente
+     3. Registrar el nombre en TEMAS_PUBLICOS, en src/lib/temas-publico.ts
+        (y en esTemaOscuro, del mismo archivo, si su fondo es oscuro)
+
+   CADA TEMA TAMBIEN CAMBIA LA FORMA DE LAS TARJETAS
+     Hero, separadores y grillas se adaptan al tema activo; la logica esta en:
+       - src/pages/cine/home/heroe-publico.tsx        (4 heroes)
+       - src/pages/cine/home/grilla-publico.tsx       (grilla de la home)
+       - src/pages/peliculas/grilla-peliculas.tsx     (grilla de /peliculas)
+       - src/pages/cartelera/tarjetas-cartelera.tsx   (tarjetas de /cartelera)
+       - src/layouts/publico/pie-publico.tsx          (4 pies de pagina)
+       - separadores y adornos (.separador-*, .neon-*, .retro-*) abajo
+
+   QUE SIGNIFICA CADA VARIABLE
+     background / foreground   fondo de pagina y color del texto principal
+     card / card-foreground    fondo y texto de tarjetas (cartelera, peliculas)
+     popover(-foreground)      menus y paneles flotantes
+     primary(-foreground)      botones rellenos, chips de horarios, filtros
+     secondary(-foreground)    botones secundarios y textos de sinopsis
+     muted / muted-foreground  fondos suaves (placeholders) y texto gris
+     accent / accent-foreground fondo y texto de botones "outline" al hacer hover
+     border / input            bordes de tarjetas y de campos de formulario
+     mono / mono-foreground    titulos con clase text-mono y fondo de los toasts
+     acento                    color decorativo: etiquetas, logo, CTA, subrayados
+     acento-hover              color del acento al pasar el mouse
+     acento-texto              texto que va encima de un fondo de color acento
+     font-display              fuente de titulares y logo (familias en index.html)
+
+   NOTA: el panel administrativo NO usa estos temas; su paleta sigue en
+   src/css/config.reui.css y su fuente de titulares es la global de styles.css.
+   ============================================================================ */
+
+/* Utilidades de Tailwind generadas a partir de las variables de acento:
+   text-acento, bg-acento, border-acento/30, hover:bg-acento-hover, ... */
+@theme inline {
+  --color-acento: var(--acento);
+  --color-acento-hover: var(--acento-hover);
+  --color-acento-texto: var(--acento-texto);
+}
+
+/* Valores de respaldo por si un elemento con acento queda fuera de la zona publica */
+:root {
+  --acento: #fbbf24;
+  --acento-hover: #fcd34d;
+  --acento-texto: #09090b;
+}
+
+/* ── Tema "oscuro": sala oscura original (no cambia nada de lo existente) ── */
+.zona-publica[data-tema='oscuro'] {
+  color-scheme: dark;
+  --font-display: 'Anton', 'Arial Narrow', sans-serif;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
+  --primary: #1379f0;
+  --primary-foreground: #ffffff;
+  --secondary: #27272a;
+  --secondary-foreground: #a1a1aa;
+  --muted: #18181b;
+  --muted-foreground: #71717a;
+  --accent: #18181b;
+  --accent-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --mono: #d4d4d8;
+  --mono-foreground: #000000;
+  --acento: #fbbf24;
+  --acento-hover: #fcd34d;
+  --acento-texto: #09090b;
+}
+
+/* ── Tema "papel": cartelera impresa, fondo claro y rojo cortina ── */
+.zona-publica[data-tema='papel'] {
+  color-scheme: light;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --background: #faf7f2;
+  --foreground: #1c1917;
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --popover: #ffffff;
+  --popover-foreground: #1c1917;
+  --primary: #c81e26;
+  --primary-foreground: #ffffff;
+  --secondary: #f0ebe3;
+  --secondary-foreground: #57534e;
+  --muted: #f0ebe3;
+  --muted-foreground: #78716c;
+  --accent: #f0ebe3;
+  --accent-foreground: #1c1917;
+  --border: #ded6c7;
+  --input: #d3c9b6;
+  --mono: #1c1917;
+  --mono-foreground: #ffffff;
+  --acento: #c81e26;
+  --acento-hover: #a8171e;
+  --acento-texto: #ffffff;
+}
+
+/* ── Tema "neon": noche azulada con cian de acento y magenta en botones ── */
+.zona-publica[data-tema='neon'] {
+  color-scheme: dark;
+  --font-display: 'Space Grotesk', ui-sans-serif, sans-serif;
+  --background: #0b0f1e;
+  --foreground: #eaf2ff;
+  --card: #101731;
+  --card-foreground: #eaf2ff;
+  --popover: #101731;
+  --popover-foreground: #eaf2ff;
+  --primary: #e879f9;
+  --primary-foreground: #0b0f1e;
+  --secondary: #1a2140;
+  --secondary-foreground: #94a3b8;
+  --muted: #151c36;
+  --muted-foreground: #7e8cb0;
+  --accent: #1a2140;
+  --accent-foreground: #eaf2ff;
+  --border: #233058;
+  --input: #233058;
+  --mono: #dcebff;
+  --mono-foreground: #0b0f1e;
+  --acento: #22d3ee;
+  --acento-hover: #67e8f9;
+  --acento-texto: #06202a;
+}
+
+/* ── Tema "retro": los 70 en crema, verde bosque y mostaza ── */
+.zona-publica[data-tema='retro'] {
+  color-scheme: light;
+  --font-display: 'Ultra', Georgia, serif;
+  --background: #f5f1e8;
+  --foreground: #292524;
+  --card: #fffdf6;
+  --card-foreground: #292524;
+  --popover: #fffdf6;
+  --popover-foreground: #292524;
+  --primary: #16653d;
+  --primary-foreground: #ffffff;
+  --secondary: #eae3d2;
+  --secondary-foreground: #6b6152;
+  --muted: #eae3d2;
+  --muted-foreground: #7d7360;
+  --accent: #eae3d2;
+  --accent-foreground: #292524;
+  --border: #ddd3bf;
+  --input: #d3c9b3;
+  --mono: #292524;
+  --mono-foreground: #ffffff;
+  --acento: #d97706;
+  --acento-hover: #b45309;
+  --acento-texto: #2a1f0e;
+}
+
+/* Punto de luz del logo: brilla con el acento del tema al pasar el mouse */
+.punto-proyector {
+  transition: box-shadow 0.2s ease;
+}
+
+.group:hover .punto-proyector {
+  box-shadow: 0 0 8px 2px color-mix(in srgb, var(--acento) 60%, transparent);
+}
+
+/* ── Separadores de seccion: la home elige la clase segun el tema activo ── */
+
+/* papel: filete doble de imprenta (dos lineas paralelas) */
+.separador-papel {
+  height: 8px;
+  border-top: 2px solid color-mix(in srgb, var(--foreground) 70%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--foreground) 70%, transparent);
+}
+
+/* neon: linea degradada cian→magenta con halo */
+.separador-neon {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--acento),
+    var(--primary),
+    var(--acento),
+    transparent
+  );
+  box-shadow: 0 0 14px color-mix(in srgb, var(--acento) 55%, transparent);
+}
+
+/* retro: franja diagonal verde bosque y mostaza */
+.separador-retro {
+  height: 14px;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--primary) 0 10px,
+    var(--acento) 10px 20px
+  );
+}
+
+/* ── Adornos de hero y grilla (heroe-publico.tsx y grilla-publico.tsx) ── */
+
+/* neon: el titulo principal resplandece en cian */
+.neon-resplandor {
+  text-shadow: 0 0 22px color-mix(in srgb, var(--acento) 55%, transparent);
+}
+
+/* neon: el marco del poster emite un halo cian */
+.neon-marco {
+  box-shadow: 0 0 26px color-mix(in srgb, var(--acento) 35%, transparent);
+}
+
+/* neon: las tarjetas de la grilla brillan al pasar el mouse */
+.tarjeta-neon {
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.group:hover .tarjeta-neon {
+  border-color: color-mix(in srgb, var(--acento) 70%, transparent);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--acento) 30%, transparent);
+}
+
+/* retro: sol naranja difuso atras del hero */
+.retro-sol {
+  background: radial-gradient(
+    circle at 70% 40%,
+    color-mix(in srgb, var(--acento) 26%, transparent) 0%,
+    transparent 55%
+  );
+}
+
+/* retro: impresion descuadrada (sombra desplazada en verde bosque) */
+.retro-impresion {
+  text-shadow: 3px 3px 0 color-mix(in srgb, var(--primary) 50%, transparent);
+}
